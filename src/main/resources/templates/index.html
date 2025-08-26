@@ -1,30 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SMART on FHIR - Java (Spring Boot)</title>
-  <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; padding: 2rem; }
-    .card { max-width: 760px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; box-shadow: 0 2px 10px rgba(0,0,0,.05); }
-    h1 { margin-top: 0; }
-    a.button { display: inline-block; padding: 12px 18px; border-radius: 8px; text-decoration: none; background: #0ea5e9; color: white; font-weight: 600; }
-    .muted { color: #6b7280; }
-    .mt { margin-top: 1rem; }
-  </style>
-</head>
-<body>
-  <div class="card">
-    <h1>SMART on FHIR — Spring Boot</h1>
-    <p class="muted">Demo app: Authorization Code + PKCE → use HAPI FHIR with the access token.</p>
-    <ol>
-      <li>Update <code>application.yml</code> with your <strong>fhirBase</strong>, <strong>clientId</strong>, and <strong>scopes</strong>.</li>
-      <li>Run the app then click below to start the SMART flow.</li>
-    </ol>
-
-    <a class="button" href="/auth/start">Connect with SMART</a>
-
-    <p class="mt muted">After login/consent, you'll be redirected to <code>/patients</code> and we'll fetch 5 <code>Patient</code> resources.</p>
-  </div>
-</body>
-</html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>SMART on FHIR — Spring Boot</title>
+<style>body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;padding:2rem}.card{max-width:760px;margin:0 auto;border:1px solid #e5e7eb;border-radius:12px;padding:24px;box-shadow:0 2px 10px rgba(0,0,0,.05)}a.button{display:inline-block;padding:12px 18px;border-radius:8px;background:#0ea5e9;color:#fff;text-decoration:none;font-weight:600}</style></head>
+<body><div class="card"><h1>SMART on FHIR — Spring Boot</h1>
+<p>Demo con Authorization Code + PKCE. Usa <code>/.well-known/smart-configuration</code> para discovery y HAPI FHIR para consultas.</p>
+<ol><li>Edita <code>application.yml</code> para modo standalone (o usa EHR Launch).</li><li>Inicia flujo:</li></ol>
+<p><a class="button" href="/auth/start">Standalone Launch</a></p>
+<p>Para <strong>EHR Launch</strong> apúntate a <code>/ehr/launch?iss=...&amp;launch=...</code>.</p>
+</div></body></html>

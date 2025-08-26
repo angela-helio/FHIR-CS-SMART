@@ -1,64 +1,24 @@
-# SMART on FHIR — Spring Boot (Java 21)
+# SMART on FHIR — Spring Boot (EHR + Standalone)
 
-A minimal, **senior-grade** structure to run a SMART on FHIR client in Java with **Spring Boot 3**, **PKCE**, and **HAPI FHIR**.
+Senior-grade sample implementing **SMART App Launch** with **EHR Launch** and **Standalone Launch** using Spring Boot 3, Java 21, PKCE and HAPI FHIR.
 
-## Features
-- SMART discovery via `/.well-known/smart-configuration` with `/metadata` fallback
-- Authorization Code + **PKCE** (public client)
-- Simple session storage for `state`, `code_verifier`, and token set
-- HAPI FHIR client usage with `Bearer` token (example: fetch first 5 `Patient` resources)
-- Friendly Thymeleaf pages (`/`, `/patients`)
+## Quick Start
 
-## Quick start
+### Standalone
+1. Edit `src/main/resources/application.yml` (set `smart.fhirBase`, `clientId`, `redirectUri`, `scopes`).
+2. Run: `mvn -q -DskipTests spring-boot:run` and open http://127.0.0.1:8080 → **Standalone Launch**.
 
-1) Edit `src/main/resources/application.yml`:
-```yaml
-smart:
-  fhirBase: "https://launch.smarthealthit.org/v/r4/sim/<YOUR>/fhir"
-  clientId: "YOUR_CLIENT_ID"
-  redirectUri: "http://127.0.0.1:8080/callback"
-  scopes: "launch/patient patient.read openid fhirUser offline_access"
-```
-
-2) Build & run:
-```bash
-mvn -q -DskipTests spring-boot:run
-# or
-mvn -q -DskipTests package
-java -jar target/smart-fhir-springboot-1.0.0.jar
-```
-
-3) Open http://127.0.0.1:8080 and click **Connect with SMART**.
-
-> ℹ️ For a quick sandbox, use the SMART App Launcher to get a `client_id` and consistent scopes. Register your `redirectUri` there as well.
+### EHR Launch
+1. Host the app and set your `redirectUri` in your client registration.
+2. Configure the EHR (or the SMART App Launcher) to open:
+   ```
+   https://yourapp/ehr/launch?iss=<FHIR_BASE>&launch=<LAUNCH_TOKEN>
+   ```
+3. The app will discover SMART endpoints from `iss`, build the authorize request with `aud=<iss>` and `launch=<LAUNCH_TOKEN>`, then exchange the code and query FHIR.
 
 ## Notes
-- If your server issues a `refresh_token`, the app will automatically refresh the access token when close to expiry.
-- For **EHR Launch** (with `iss`/`launch`), you can pass a `launch` value via `application.yml` and the app will include it in the authorize URL.
-- Replace or enhance the in-session token storage with a persistent store for multi-user / production scenarios.
-- The sample queries 5 `Patient` resources; tailor `FhirService` to your needs.
+- Discovery via `/.well-known/smart-configuration` with `/metadata` fallback.
+- PKCE (no client secret), token refresh if `refresh_token` is issued.
+- HAPI FHIR used to query 5 `Patient` resources.
 
-## Structure
-```
-src/main/java/com/example/smartspring
-├─ SmartSpringApplication.java
-├─ config/AppProperties.java
-├─ oauth/
-│  ├─ PkceUtil.java
-│  ├─ SmartDiscoveryService.java
-│  └─ TokenService.java
-├─ service/FhirService.java
-└─ web/
-   ├─ AuthController.java
-   └─ FhirController.java
-src/main/resources
-├─ application.yml
-└─ templates/
-   ├─ index.html
-   └─ patients.html
-```
-
----
-
-## License
-MIT (sample code)
+MIT

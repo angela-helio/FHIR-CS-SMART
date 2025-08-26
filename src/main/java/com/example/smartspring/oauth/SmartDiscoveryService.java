@@ -1,73 +1,21 @@
 package com.example.smartspring.oauth;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-
+import com.fasterxml.jackson.databind.*; import org.springframework.stereotype.Service;
+import java.net.*; import java.net.http.*;
 @Service
 public class SmartDiscoveryService {
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
-    public SmartEndpoints discover(String fhirBase) {
-        String base = fhirBase.replaceAll("/+$","");
-        // Try .well-known/smart-configuration
-        URI wellKnown = URI.create(base + "/.well-known/smart-configuration");
-        try {
-            HttpResponse<String> resp = HttpClient.newHttpClient()
-                    .send(HttpRequest.newBuilder(wellKnown).GET().build(), HttpResponse.BodyHandlers.ofString());
-            if (resp.statusCode() / 100 == 2) {
-                JsonNode j = MAPPER.readTree(resp.body());
-                String auth = j.path("authorization_endpoint").asText(null);
-                String token = j.path("token_endpoint").asText(null);
-                if (auth != null && token != null) {
-                    return new SmartEndpoints(URI.create(auth), URI.create(token));
-                }
-            }
-        } catch (Exception ignore) {}
-
-        // Fallback to /metadata
-        URI meta = URI.create(base + "/metadata");
-        try {
-            HttpResponse<String> resp = HttpClient.newHttpClient()
-                    .send(HttpRequest.newBuilder(meta).GET().build(), HttpResponse.BodyHandlers.ofString());
-            if (resp.statusCode() / 100 != 2) {
-                throw new IllegalStateException("No SMART discovery and /metadata failed: " + resp.statusCode());
-            }
-            JsonNode root = MAPPER.readTree(resp.body());
-            // Find security extension with oauth-uris
-            JsonNode rests = root.path("rest");
-            if (rests.isArray() && rests.size() > 0) {
-                JsonNode sec = rests.get(0).path("security");
-                JsonNode exts = sec.path("extension");
-                if (exts.isArray()) {
-                    for (JsonNode ext : exts) {
-                        String url = ext.path("url").asText("");
-                        if (url.contains("oauth-uris")) {
-                            JsonNode inner = ext.path("extension");
-                            String auth = null, token = null;
-                            for (JsonNode e : inner) {
-                                String k = e.path("url").asText("");
-                                String v = e.path("valueUri").asText("");
-                                if (k.endsWith("authorize")) auth = v;
-                                if (k.endsWith("token")) token = v;
-                            }
-                            if (auth != null && token != null) {
-                                return new SmartEndpoints(URI.create(auth), URI.create(token));
-                            }
-                        }
-                    }
-                }
-            }
-            throw new IllegalStateException("SMART endpoints not found in CapabilityStatement");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static record SmartEndpoints(URI authorizationEndpoint, URI tokenEndpoint) {}
+  private static final ObjectMapper M=new ObjectMapper();
+  public SmartEndpoints discover(String fhirBase){
+    String base=fhirBase.replaceAll("/+$","");
+    try{
+      HttpResponse<String> r=HttpClient.newHttpClient().send(HttpRequest.newBuilder(URI.create(base+"/.well-known/smart-configuration")).GET().build(), HttpResponse.BodyHandlers.ofString());
+      if(r.statusCode()/100==2){ JsonNode j=M.readTree(r.body()); String a=j.path("authorization_endpoint").asText(null); String t=j.path("token_endpoint").asText(null); if(a!=null&&t!=null) return new SmartEndpoints(URI.create(a), URI.create(t)); }
+    }catch(Exception ignore){}
+    try{
+      HttpResponse<String> r=HttpClient.newHttpClient().send(HttpRequest.newBuilder(URI.create(base+"/metadata")).GET().build(), HttpResponse.BodyHandlers.ofString());
+      if(r.statusCode()/100!=2) throw new IllegalStateException("No SMART discovery and /metadata failed: "+r.statusCode());
+      JsonNode root=M.readTree(r.body()); JsonNode rests=root.path("rest"); if(rests.isArray()&&rests.size()>0){ JsonNode exts=rests.get(0).path("security").path("extension"); if(exts.isArray()) for(JsonNode ext: exts){ if(ext.path("url").asText("").contains("oauth-uris")){ String auth=null, tok=null; for(JsonNode e: ext.path("extension")){ String k=e.path("url").asText(""); String v=e.path("valueUri").asText(""); if(k.endsWith("authorize")) auth=v; if(k.endsWith("token")) tok=v; } if(auth!=null&&tok!=null) return new SmartEndpoints(URI.create(auth), URI.create(tok)); } } }
+      throw new IllegalStateException("SMART endpoints not found in CapabilityStatement");
+    }catch(Exception e){ throw new RuntimeException(e); }
+  }
+  public static record SmartEndpoints(URI authorizationEndpoint, URI tokenEndpoint){}
 }

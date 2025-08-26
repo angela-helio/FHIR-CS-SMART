@@ -2,12 +2,12 @@ server:
   port: 8080
 
 smart:
-  # Replace with your FHIR sandbox or EHR server base
+  # For standalone testing only. In EHR launch, these come from `iss` and `launch` query params.
   fhirBase: "https://launch.smarthealthit.org/v/r4/sim/eyJrIjoiMSIsImoiOiIxIn0/fhir"
   clientId: "YOUR_CLIENT_ID"
   redirectUri: "http://127.0.0.1:8080/callback"
   scopes: "launch/patient patient.read openid fhirUser offline_access"
-  # launch: "" # Uncomment and set if doing EHR launch
+  # launch: ""
 
 spring:
   thymeleaf:

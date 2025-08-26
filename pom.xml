@@ -7,16 +7,13 @@
   <artifactId>smart-fhir-springboot</artifactId>
   <version>1.0.0</version>
   <name>SMART on FHIR - Spring Boot</name>
-  <description>Sample SMART on FHIR Java app with Spring Boot + HAPI FHIR + PKCE</description>
-
+  <description>SMART on FHIR client (EHR + standalone) with Spring Boot 3, PKCE and HAPI FHIR</description>
   <properties>
     <java.version>21</java.version>
     <spring.boot.version>3.3.2</spring.boot.version>
     <hapi.fhir.version>7.4.0</hapi.fhir.version>
-    <jackson.version>2.17.2</jackson.version>
     <nimbus.version>11.10.1</nimbus.version>
   </properties>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -28,9 +25,7 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
   <dependencies>
-    <!-- Spring Boot -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
@@ -39,8 +34,6 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-thymeleaf</artifactId>
     </dependency>
-
-    <!-- HAPI FHIR (client + R4 model classes) -->
     <dependency>
       <groupId>ca.uhn.hapi.fhir</groupId>
       <artifactId>hapi-fhir-client</artifactId>
@@ -51,42 +44,22 @@
       <artifactId>hapi-fhir-structures-r4</artifactId>
       <version>${hapi.fhir.version}</version>
     </dependency>
-
-    <!-- OAuth2/OIDC SDK (PKCE + token exchange) -->
     <dependency>
       <groupId>com.nimbusds</groupId>
       <artifactId>oauth2-oidc-sdk</artifactId>
       <version>${nimbus.version}</version>
     </dependency>
-
-    <!-- (Optional) JSON; Spring provides Jackson; explicit databind version here -->
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>${jackson.version}</version>
-    </dependency>
-
-    <!-- Test -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <build>
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>${java.version}</source>
-          <target>${java.version}</target>
-        </configuration>
       </plugin>
     </plugins>
   </build>
