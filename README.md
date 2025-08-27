@@ -1,6 +1,6 @@
 # SMART on FHIR — Spring Boot (EHR + Standalone)
 
-Senior-grade sample implementing **SMART App Launch** with **EHR Launch** and **Standalone Launch** using Spring Boot 3, Java 21, PKCE and HAPI FHIR.
+Sample implementing **SMART App Launch** with **EHR Launch** and **Standalone Launch** using Spring Boot 3, Java 21, PKCE and HAPI FHIR.
 
 ## Quick Start
 
@@ -20,5 +20,3 @@ Senior-grade sample implementing **SMART App Launch** with **EHR Launch** and **
 - Discovery via `/.well-known/smart-configuration` with `/metadata` fallback.
 - PKCE (no client secret), token refresh if `refresh_token` is issued.
 - HAPI FHIR used to query 5 `Patient` resources.
-
-MIT
