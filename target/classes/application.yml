@@ -3,8 +3,9 @@ server:
 
 smart:
   # For standalone testing only. In EHR launch, these come from `iss` and `launch` query params.
-  fhirBase: "https://launch.smarthealthit.org/v/r4/sim/eyJrIjoiMSIsImoiOiIxIn0/fhir"
-  clientId: "123HeliosClientTestID"
+  fhirBase: "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/CP00101/"
+  clientId: "09D58C5A-8712-4E7F-85ED-73140C665CAE"
+  clientSecret: "1C669E09918B"
   redirectUri: "http://127.0.0.1:8080/callback"
   scopes: "launch/patient patient.read openid fhirUser offline_access"
   # launch: ""
