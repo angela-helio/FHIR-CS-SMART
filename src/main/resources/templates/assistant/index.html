@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>Diagnostic Assistant – Patients</title>
+    <style>
+        body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#f5f7fb;margin:0}
+        .wrap{max-width:960px;margin:32px auto;padding:0 16px}
+        .card{background:#fff;border-radius:16px;padding:20px;box-shadow:0 6px 24px rgba(0,0,0,.06)}
+        .row{display:flex;gap:24px}
+        .col{flex:1}
+        .btn{display:inline-block;padding:8px 12px;border-radius:10px;border:1px solid #cbd5e1;text-decoration:none;color:#1f2937;background:#fff}
+        .btn:hover{background:#f1f5f9}
+        ul{margin:8px 0 0 20px}
+        h1{margin:0 0 12px}
+        small{color:#64748b}
+        .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="card">
+        <div class="toolbar">
+            <h1>Patients (<span th:text="${patients.size()}">0</span>)</h1>
+            <div>
+                <a class="btn" th:href="@{|/assistant/all?maxPatients=${maxPatients}|}">View reports for all</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <ul>
+                    <li th:each="p : ${patients}">
+                        <span th:text="${p.display}">Patient Name</span>
+                        <a class="btn" th:href="@{|/assistant/patient/${p.id}|}" style="margin-left:8px">Open</a>
+                    </li>
+                </ul>
+                <p><small>Showing first <span th:text="${maxPatients}">10</span> patients.</small></p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

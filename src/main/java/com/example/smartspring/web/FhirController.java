@@ -4,9 +4,13 @@ import com.example.smartspring.config.AppProperties;
 import com.example.smartspring.oauth.TokenService;
 import com.example.smartspring.service.FhirService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.time.Instant;
@@ -22,7 +26,12 @@ import org.hl7.fhir.r4.model.Medication;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.rest.api.EncodingEnum;
+import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.client.interceptor.BearerTokenAuthInterceptor;
+import org.hl7.fhir.r4.model.DiagnosticReport;
+import org.hl7.fhir.r4.model.Observation;
 
 @Controller
 public class FhirController {
@@ -116,5 +125,50 @@ public class FhirController {
         model.addAttribute("count", bundle.getEntry().size());
         model.addAttribute("names", names);
         return "patients";
+    }
+
+    @GetMapping("/api/patient/{patientId}/diagnostic-reports")
+    public ResponseEntity<String> getDiagnosticReports(@PathVariable String patientId, HttpSession session) {
+        IGenericClient client = makeClient(session);
+        Bundle bundle = client.search()
+                .forResource(DiagnosticReport.class)
+                .where(DiagnosticReport.PATIENT.hasId(patientId))
+                .include(DiagnosticReport.INCLUDE_RESULT) // trae Observations referenciadas por el Report
+                .count(50)
+                .returnBundle(Bundle.class)
+                .execute();
+
+        String json = FhirContext.forR4().newJsonParser().setPrettyPrint(true).encodeResourceToString(bundle);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(json);
+    }
+
+    @GetMapping("/api/patient/{patientId}/observations")
+    public ResponseEntity<String> getObservations(@PathVariable String patientId,
+                                                  @RequestParam(required=false) String category, // ej: laboratory | vital-signs
+                                                  HttpSession session) {
+        IGenericClient client = makeClient(session);
+        var search = client.search()
+                .forResource(Observation.class)
+                .where(Observation.PATIENT.hasId(patientId));
+
+        if (category != null && !category.isBlank()) {
+            // categorías estándar: http://terminology.hl7.org/CodeSystem/observation-category
+            search = search.and(Observation.CATEGORY.exactly().code(category));
+        }
+
+        Bundle bundle = search.count(100).returnBundle(Bundle.class).execute();
+        String json = FhirContext.forR4().newJsonParser().setPrettyPrint(true).encodeResourceToString(bundle);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(json);
+    }
+
+    // Helper: crea cliente HAPI con token/base de tu sesión actual
+    private IGenericClient makeClient(HttpSession session) {
+        String base = (String) session.getAttribute("runtime_fhir_base");
+        String token = (String) session.getAttribute("access_token"); // usa el nombre que guardas en tu callback
+        var ctx = FhirContext.forR4();
+        var client = ctx.newRestfulGenericClient(base);
+        client.setEncoding(EncodingEnum.JSON);
+        client.registerInterceptor(new BearerTokenAuthInterceptor(token));
+        return client;
     }
 }

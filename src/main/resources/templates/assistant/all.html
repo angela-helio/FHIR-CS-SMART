@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>Diagnostic Assistant – All Patients</title>
+    <style>
+        body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#f5f7fb;margin:0}
+        .wrap{max-width:980px;margin:32px auto;padding:0 16px}
+        .card{background:#fff;border-radius:16px;padding:20px;box-shadow:0 6px 24px rgba(0,0,0,.06);margin-bottom:16px}
+        .badge{display:inline-block;background:#e2e8f0;color:#334155;border-radius:999px;padding:2px 8px;margin-left:6px;font-size:12px}
+        .muted{color:#64748b}
+        .btn{display:inline-block;padding:6px 10px;border-radius:10px;border:1px solid #cbd5e1;text-decoration:none;color:#1f2937;background:#fff}
+        .btn:hover{background:#f1f5f9}
+        .obs{border-left:3px solid #94a3b8;padding-left:10px;margin:6px 0}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="card">
+        <a class="btn" href="/assistant">← Patients</a>
+        <h2>All Patients</h2>
+    </div>
+
+    <div th:each="entry : ${sections}">
+        <div class="card">
+            <h3 th:text="${entry.key.display}">Patient</h3>
+            <div th:if="${#lists.isEmpty(entry.value)}" class="muted">No reports.</div>
+
+            <div th:each="r : ${entry.value}">
+                <p>
+                    <strong th:text="${r.code}">DiagnosticReport</strong>
+                    <span class="badge" th:text="${r.status}">final</span>
+                    <span class="muted" th:text="${r.when}"></span>
+                </p>
+                <div th:each="o : ${r.observations}">
+                    <div class="obs">
+                        <div><strong th:text="${o.code}">Observation</strong>
+                            <span class="badge" th:text="${o.category}">lab</span></div>
+                        <div th:text="${o.value}">value</div>
+                        <div class="muted" th:text="${o.issuedOrEffective}">time</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

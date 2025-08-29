@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title th:text="'Diagnostic Assistant – ' + ${patient.display}">Diagnostic Assistant</title>
+    <style>
+        body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#f5f7fb;margin:0}
+        .wrap{max-width:980px;margin:32px auto;padding:0 16px}
+        .card{background:#fff;border-radius:16px;padding:20px;box-shadow:0 6px 24px rgba(0,0,0,.06);margin-bottom:16px}
+        .badge{display:inline-block;background:#e2e8f0;color:#334155;border-radius:999px;padding:2px 8px;margin-left:6px;font-size:12px}
+        .muted{color:#64748b}
+        .btn{display:inline-block;padding:6px 10px;border-radius:10px;border:1px solid #cbd5e1;text-decoration:none;color:#1f2937;background:#fff}
+        .btn:hover{background:#f1f5f9}
+        .grid{display:grid;grid-template-columns:1fr;gap:12px}
+        .obs{border-left:3px solid #94a3b8;padding-left:10px;margin:6px 0}
+        form.inline>*{margin-right:8px}
+        input,select{padding:6px 8px;border:1px solid #cbd5e1;border-radius:8px}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="card">
+        <a class="btn" href="/assistant">← Patients</a>
+        <h2 th:text="${patient.display}">Patient</h2>
+        <form class="inline" method="get">
+            <label>Category:
+                <select name="category" th:value="${filters.category}">
+                    <option value="">(any)</option>
+                    <option value="laboratory">laboratory</option>
+                    <option value="vital-signs">vital-signs</option>
+                    <option value="imaging">imaging</option>
+                    <option value="exam">exam</option>
+                    <option value="procedure">procedure</option>
+                    <option value="therapy">therapy</option>
+                </select>
+            </label>
+            <label>From: <input type="date" name="from" th:value="${filters.from}"/></label>
+            <label>To: <input type="date" name="to" th:value="${filters.to}"/></label>
+            <label>Max: <input type="number" name="maxReports" min="1" max="100" th:value="${filters.maxReports}"/></label>
+            <button class="btn" type="submit">Apply</button>
+        </form>
+    </div>
+
+    <div class="card" th:each="r : ${reports}">
+        <h3>
+            <span th:text="${r.code}">Report</span>
+            <span class="badge" th:text="${r.status}">final</span>
+        </h3>
+        <div class="muted" th:text="${r.when}">date/time</div>
+        <div class="muted" th:if="${r.performer != ''}" th:text="'Performer: ' + ${r.performer}"></div>
+
+        <div class="grid" th:if="${#lists.isEmpty(r.observations()) == false}">
+            <div class="obs" th:each="o : ${r.observations}">
+                <div><strong th:text="${o.code}">Test name</strong>
+                    <span class="badge" th:text="${o.category}">lab</span>
+                </div>
+                <div th:text="${o.value}">value</div>
+                <div class="muted" th:text="${o.issuedOrEffective}">time</div>
+            </div>
+        </div>
+        <div class="muted" th:if="${#lists.isEmpty(r.observations())}">No observations in report.</div>
+    </div>
+</div>
+</body>
+</html>

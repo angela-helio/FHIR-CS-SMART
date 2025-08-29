@@ -47,28 +47,46 @@ public class AuthController {
     public RedirectView start(HttpSession session) {
         String fhirBase = (String) session.getAttribute("runtime_fhir_base");
         if (fhirBase == null || fhirBase.isBlank()) fhirBase = props.getFhirBase();
+
         String launchParam = (String) session.getAttribute("runtime_launch");
         if ((launchParam == null || launchParam.isBlank()) && props.getLaunch() != null && !props.getLaunch().isBlank())
             launchParam = props.getLaunch();
-        var endpoints = discovery.discover(fhirBase);
+
+        // 1) Mantén 'aud' EXACTAMENTE igual al iss/FHIR Base del EHR
+        final String aud = fhirBase;
+
+        // Usa base normalizada para discovery (evita problemas con / al final)
+        final String discoverBase = (aud != null && aud.endsWith("/")) ? aud.substring(0, aud.length() - 1) : aud;
+        var endpoints = discovery.discover(discoverBase);
+
         String verifierStr = PkceUtil.generateCodeVerifier();
         String challenge = PkceUtil.codeChallengeS256(verifierStr);
-        CodeVerifier verifier = new CodeVerifier(verifierStr);
         State state = new State();
+
+        // 2) Normaliza scopes a UNA sola línea (sin \n, \t, dobles espacios)
+        String scopes = props.getScopes();
+        if (scopes == null) scopes = "";
+        scopes = scopes.replaceAll("\\s+", " ").trim();
+
         String authorize = endpoints.authorizationEndpoint().toString()
                 + "?response_type=code"
                 + "&client_id=" + url(props.getClientId())
                 + "&redirect_uri=" + url(props.getRedirectUri())
-                + "&scope=" + url(props.getScopes())
+                + "&scope=" + url(scopes)
                 + "&state=" + url(state.getValue())
                 + "&code_challenge=" + url(challenge)
                 + "&code_challenge_method=" + CodeChallengeMethod.S256.getValue()
-                + "&aud=" + url(fhirBase);
-        if (launchParam != null && !launchParam.isBlank()) authorize += "&launch=" + url(launchParam);
+                + "&aud=" + url(aud);
+
+        if (launchParam != null && !launchParam.isBlank()) {
+            authorize += "&launch=" + url(launchParam);
+        }
+
         session.setAttribute("code_verifier", verifierStr);
         session.setAttribute("oauth_state", state.getValue());
         session.setAttribute("token_endpoint", endpoints.tokenEndpoint().toString());
-        session.setAttribute("runtime_fhir_base", fhirBase);
+        session.setAttribute("runtime_fhir_base", aud);
+
         RedirectView rv = new RedirectView(authorize);
         rv.setExposeModelAttributes(false);
         return rv;
@@ -92,14 +110,15 @@ public class AuthController {
         }
         String verifier = (String) session.getAttribute("code_verifier");
         String tokenEndpoint = (String) session.getAttribute("token_endpoint");
-        var token = tokenService.exchangeCode(URI.create(tokenEndpoint), props.getClientId(), props.getRedirectUri(), new AuthorizationCode(code), new CodeVerifier(verifier));
+        var token = tokenService.exchangeCode(URI.create(tokenEndpoint), props.getClientId(),
+                props.isConfidential(), props.getClientSecret(), code, props.getRedirectUri(), verifier);
         session.setAttribute("access_token", token.accessToken());
         session.setAttribute("refresh_token", token.refreshToken());
         session.setAttribute("token_exp", token.expiresEpochSeconds());
         if (token.patientId() != null && !token.patientId().isBlank()) {
             session.setAttribute("patient_id", token.patientId());
         }
-        String next = (String) session.getAttribute("patient_id") != null ? "/me" : "/patients";
+        String next = (String) session.getAttribute("patient_id") != null ? "/me" : "/assistant";
         RedirectView rv = new RedirectView(next);
         rv.setExposeModelAttributes(false);
         return rv;

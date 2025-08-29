@@ -6,9 +6,15 @@ import org.springframework.stereotype.Component;
 public class AppProperties {
   private String fhirBase;
   private String clientId;
-  private String redirectUri="http://127.0.0.1:8080/callback";
-  private String scopes="launch/patient patient.read openid fhirUser offline_access";
+  private String redirectUri="https://41d2adcbd63f.ngrok-free.app/callback";
+  private String scopes="launch/patient openid fhirUser patient/Patient.read patient/MedicationRequest.read";
   private String launch; // optional for standalone EHR-like launch
+  private boolean confidential = false;
+  private String clientSecret = "";
+  public boolean isConfidential(){ return confidential; }
+  public void setConfidential(boolean v){ this.confidential = v; }
+  public String getClientSecret(){ return clientSecret; }
+  public void setClientSecret(String v){ this.clientSecret = v; }
   public String getFhirBase(){return fhirBase;} public void setFhirBase(String v){this.fhirBase=v;}
   public String getClientId(){return clientId;} public void setClientId(String v){this.clientId=v;}
   public String getRedirectUri(){return redirectUri;} public void setRedirectUri(String v){this.redirectUri=v;}
