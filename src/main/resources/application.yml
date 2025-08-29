@@ -1,14 +1,23 @@
 server:
   port: 8080
+  servlet:
+    session:
+      cookie:
+        same-site: none     # imprescindible en iframe (third-party)
+        secure: true
 
 smart:
   # For standalone testing only. In EHR launch, these come from `iss` and `launch` query params.
   fhirBase: "https://launch.smarthealthit.org/v/r4/sim/eyJrIjoiMSIsImoiOiIxIn0/fhir"
-  clientId: "123HeliosClientTestID"
-  redirectUri: "http://127.0.0.1:8080/callback"
-  scopes: "launch/patient patient.read openid fhirUser offline_access"
+  clientId: "e173a5a9-eab4-43e8-9ad1-9b3d961d0979"
+  redirectUri: "https://41d2adcbd63f.ngrok-free.app/ehr/callback"
+  scopes: "openid fhirUser launch launch/patient offline_access patient/MedicationRequest.read patient/Medication.read patient/MedicationAdministration.read patient/Patient.read patient/Practitioner.read patient/DiagnosticReport.read"
   # launch: ""
 
 spring:
   thymeleaf:
     cache: false
+
+logging:
+  level:
+    com.example.smartspring: DEBUG

@@ -1,8 +1,15 @@
 C:\fhir\FHIR-CS-SMART\src\main\java\com\example\smartspring\config\AppProperties.java
+C:\fhir\FHIR-CS-SMART\src\main\java\com\example\smartspring\config\FhirConfig.java
+C:\fhir\FHIR-CS-SMART\src\main\java\com\example\smartspring\config\SmartConfig.java
+C:\fhir\FHIR-CS-SMART\src\main\java\com\example\smartspring\helper\PatientExtractor.java
 C:\fhir\FHIR-CS-SMART\src\main\java\com\example\smartspring\oauth\PkceUtil.java
 C:\fhir\FHIR-CS-SMART\src\main\java\com\example\smartspring\oauth\SmartDiscoveryService.java
 C:\fhir\FHIR-CS-SMART\src\main\java\com\example\smartspring\oauth\TokenService.java
 C:\fhir\FHIR-CS-SMART\src\main\java\com\example\smartspring\service\FhirService.java
+C:\fhir\FHIR-CS-SMART\src\main\java\com\example\smartspring\smart\JwtUtils.java
+C:\fhir\FHIR-CS-SMART\src\main\java\com\example\smartspring\smart\OAuthService.java
+C:\fhir\FHIR-CS-SMART\src\main\java\com\example\smartspring\smart\Pkce.java
+C:\fhir\FHIR-CS-SMART\src\main\java\com\example\smartspring\smart\SmartDiscoveryClient.java
 C:\fhir\FHIR-CS-SMART\src\main\java\com\example\smartspring\SmartSpringApplication.java
 C:\fhir\FHIR-CS-SMART\src\main\java\com\example\smartspring\web\AuthController.java
 C:\fhir\FHIR-CS-SMART\src\main\java\com\example\smartspring\web\FhirController.java

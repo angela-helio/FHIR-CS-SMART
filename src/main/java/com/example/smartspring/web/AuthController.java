@@ -18,6 +18,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 @Controller
+@RequestMapping("/legacy")
 public class AuthController {
     private final AppProperties props;
     private final SmartDiscoveryService discovery;

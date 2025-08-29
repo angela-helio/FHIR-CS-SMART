@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h3 th:text="${name}">Name</h3>
+<p>Birth date: <span th:text="${birthDate}">N/A</span></p>
+<h4>MedicationRequests</h4>
+<ul>
+    <li th:each="e : ${meds.entry}" th:text="${e.resource.resourceType + ' / ' + e.resource.id}">
+        med
+    </li>
+</ul>
+</body>
+</html>

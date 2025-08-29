@@ -1,9 +1,17 @@
 com\example\smartspring\oauth\PkceUtil.class
+com\example\smartspring\config\SmartConfig.class
+com\example\smartspring\smart\JwtUtils.class
 com\example\smartspring\oauth\TokenService.class
 com\example\smartspring\service\FhirService.class
+com\example\smartspring\smart\SmartDiscoveryClient.class
 com\example\smartspring\web\AuthController.class
+com\example\smartspring\smart\Pkce.class
+com\example\smartspring\smart\OAuthService$TokenResult.class
 com\example\smartspring\SmartSpringApplication.class
 com\example\smartspring\web\FhirController.class
+com\example\smartspring\smart\OAuthService.class
+com\example\smartspring\helper\PatientExtractor.class
+com\example\smartspring\config\FhirConfig.class
 com\example\smartspring\config\AppProperties.class
 com\example\smartspring\oauth\SmartDiscoveryService.class
 com\example\smartspring\oauth\TokenService$TokenSet.class

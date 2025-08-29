@@ -1,120 +1,137 @@
 package com.example.smartspring.web;
 
-import com.example.smartspring.config.AppProperties;
-import com.example.smartspring.oauth.TokenService;
-import com.example.smartspring.service.FhirService;
-import jakarta.servlet.http.HttpSession;
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.client.interceptor.BearerTokenAuthInterceptor;
+import com.example.smartspring.config.SmartConfig;
+import com.example.smartspring.helper.PatientExtractor;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.MedicationRequest;
+import org.hl7.fhir.r4.model.Patient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.bind.annotation.RequestParam;
+import com.example.smartspring.smart.*;
 
-import java.time.Instant;
-
-import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.HumanName;
-
-import java.util.stream.Collectors;
-
-import org.hl7.fhir.r4.model.Patient;
-import org.hl7.fhir.r4.model.MedicationRequest;
-import org.hl7.fhir.r4.model.Medication;
-
-import java.util.HashMap;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.stream.Stream;
+import java.util.UUID;
 
 @Controller
 public class FhirController {
+    private final SmartDiscoveryClient discovery;
+    private final OAuthService oauth;
+    private final FhirContext fhirContext;
 
-    private final AppProperties props;
-    private final FhirService fhir;
-    private final TokenService tokens;
+    @Value("${smart.client-id}") String clientId;
+    @Value("${smart.redirect-uri}") String redirectUri;
+    @Value("${smart.scopes}") String scopes;
 
-    public FhirController(AppProperties p, FhirService s, TokenService t) {
-        this.props = p;
-        this.fhir = s;
-        this.tokens = t;
+    public FhirController(SmartDiscoveryClient discovery, OAuthService oauth, FhirContext fhirContext) {
+        this.discovery = discovery; this.oauth = oauth; this.fhirContext = fhirContext;
     }
 
-    @GetMapping("/me")
-    public Object me(Model model, HttpSession session) {
-        String access = (String) session.getAttribute("access_token");
-        if (access == null) return new RedirectView("/");
+    @GetMapping("/ehr/launch")
+    public void ehrLaunch(@RequestParam String iss, @RequestParam String launch,
+                          HttpServletResponse res, HttpSession session) throws Exception {
 
-        // refresh if it's necessary (same as /patients)
-        Long exp = (Long) session.getAttribute("token_exp");
-        String refresh = (String) session.getAttribute("refresh_token");
-        String tokenEndpoint = (String) session.getAttribute("token_endpoint");
-        if (exp != null && exp > 0 && java.time.Instant.now().getEpochSecond() > exp - 60 && refresh != null) {
-            var ts = tokens.refresh(java.net.URI.create(tokenEndpoint), props.getClientId(), refresh);
-            session.setAttribute("access_token", ts.accessToken());
-            session.setAttribute("refresh_token", ts.refreshToken());
-            session.setAttribute("token_exp", ts.expiresEpochSeconds());
-            access = ts.accessToken();
+        SmartConfig cfg = discovery.discover(iss);
+        session.setAttribute("iss", iss);
+        session.setAttribute("tokenEndpoint", cfg.tokenEndpoint());
+        session.setAttribute("userinfoEndpoint", cfg.userinfoEndpoint());
+
+        Pkce pkce = Pkce.generate();
+        session.setAttribute("codeVerifier", pkce.verifier());
+
+        String authUrl = cfg.authorizationEndpoint()
+                + "?response_type=code"
+                + "&client_id=" + url(clientId)
+                + "&redirect_uri=" + url(redirectUri)
+                + "&scope=" + url(scopes) // "openid fhirUser launch/patient patient/*.read"
+                + "&aud=" + url(iss)
+                + "&state=" + url(UUID.randomUUID().toString())
+                + "&nonce=" + url(UUID.randomUUID().toString())
+                + "&launch=" + url(launch)
+                + "&code_challenge=" + url(pkce.challenge())
+                + "&code_challenge_method=S256";
+
+        res.sendRedirect(authUrl);
+    }
+
+    @GetMapping("/ehr/callback")
+    public String ehrCallback(@RequestParam(required=false) String code,
+                              @RequestParam(required=false) String state,
+                              @RequestParam(required=false) String error,
+                              @RequestParam(required=false, name="error_description") String errorDesc,
+                              HttpSession session, Model model) {
+
+        // A) Errores directos del /authorize
+        if (error != null) {
+            model.addAttribute("error", "Authorize error: " + error + (errorDesc != null ? " - " + errorDesc : ""));
+            return "error"; // crea templates/error.html simple
         }
 
-        String fhirBase = (String) session.getAttribute("runtime_fhir_base");
-        if (fhirBase == null || fhirBase.isBlank()) fhirBase = props.getFhirBase();
-
-        String patientId = (String) session.getAttribute("patient_id");
-        if (patientId == null || patientId.isBlank()) {
-            // sin contexto → fallback a lista
-            return new RedirectView("/patients");
+        // B) Validar sesión
+        String iss = (String) session.getAttribute("iss");
+        String tokenEndpoint = (String) session.getAttribute("tokenEndpoint");
+        String userinfoEndpoint = (String) session.getAttribute("userinfoEndpoint");
+        String codeVerifier = (String) session.getAttribute("codeVerifier");
+        if (iss == null || tokenEndpoint == null || codeVerifier == null) {
+            model.addAttribute("error", "Session expired or missing context (iss/tokenEndpoint/codeVerifier). Please relaunch.");
+            return "error";
         }
 
-        // 1) Patient
-        Patient p = fhir.readPatientById(fhirBase, access, patientId);
-        String name = p.getName().isEmpty() ? "(no name)" : p.getName().get(0).getNameAsSingleString();
-        String birthDate = p.hasBirthDate() ? new java.text.SimpleDateFormat("yyyy-MM-dd").format(p.getBirthDate()) : "(unknown)";
+        try {
+            // C) Token exchange (maneja 400s y loguea cuerpo)
+            var token = oauth.exchangeAuthorizationCode(tokenEndpoint, clientId, code, codeVerifier, redirectUri);
+            String accessToken = token.accessToken();
 
-        // 2) MedicationRequests (+ include Medication)
-        var medBundle = fhir.medicationsForPatient(fhirBase, access, patientId, 50);
+            // 1) id_token → 2) token response → 3) /userinfo (fallback)
 
-        // map of Medication included by reference "Medication/{id}"
-        Map<String, Medication> medsByRef = new HashMap<>();
-        for (var e : medBundle.getEntry()) {
-            if (e.getResource() instanceof Medication m) {
-                medsByRef.put(m.getResourceType().name() + "/" + m.getIdElement().getIdPart(), m);
+            String patientId = JwtUtils.tryExtractPatient(token.idToken());
+            if (patientId == null) patientId = token.patient();
+            if (patientId == null) patientId = PatientExtractor.fromTokenResponseRaw(token.rawJson());
+
+            if (patientId == null) {
+                var ui = oauth.userinfoRaw(userinfoEndpoint, accessToken); // devuelve String
+                patientId = PatientExtractor.fromUserInfoRaw(ui);
             }
-        }
 
-        java.util.List<String> meds = new java.util.ArrayList<>();
-        for (var e : medBundle.getEntry()) {
-            if (e.getResource() instanceof MedicationRequest mr) {
-                meds.add(FhirService.medicationDisplay(mr, medsByRef));
+            if (patientId == null) {
+                model.addAttribute("error", "No patient context. Abre la app desde un **patient chart** o verifica scopes 'launch' y 'launch/patient'.");
+                return "error";
             }
+
+            // E) Llamadas FHIR (con try/catch para mostrar mensaje claro si falla)
+            IGenericClient fhir = fhirContext.newRestfulGenericClient(iss);
+            fhir.registerInterceptor(new BearerTokenAuthInterceptor(accessToken));
+
+            Patient p = fhir.read().resource(Patient.class).withId(patientId).execute();
+
+            Bundle meds = fhir.search()
+                    .forResource(MedicationRequest.class)
+                    .where(MedicationRequest.PATIENT.hasId(patientId))
+                    .returnBundle(Bundle.class)
+                    .execute();
+
+            model.addAttribute("name", p.getNameFirstRep().getNameAsSingleString());
+            model.addAttribute("birthDate", p.getBirthDateElement().asStringValue());
+            model.addAttribute("meds", meds);
+            return "patient";
+
+        } catch (Exception ex) {
+            // F) Evita Whitelabel: muestra error legible y loguea stack
+            String msg = (ex.getMessage() != null ? ex.getMessage() : ex.getClass().getSimpleName());
+            model.addAttribute("error", "Callback failed: " + msg);
+            return "error";
         }
-
-        model.addAttribute("patientId", patientId);
-        model.addAttribute("name", name);
-        model.addAttribute("birthDate", birthDate);
-        model.addAttribute("medications", meds);
-
-        return "me";
     }
 
-    @GetMapping("/patients")
-    public Object patients(Model model, HttpSession session) {
-        String access = (String) session.getAttribute("access_token");
-        Long exp = (Long) session.getAttribute("token_exp");
-        String refresh = (String) session.getAttribute("refresh_token");
-        String tokenEndpoint = (String) session.getAttribute("token_endpoint");
-        if (access == null) return new RedirectView("/");
-        if (exp != null && exp > 0 && Instant.now().getEpochSecond() > exp - 60 && refresh != null) {
-            var ts = tokens.refresh(java.net.URI.create(tokenEndpoint), props.getClientId(), refresh);
-            session.setAttribute("access_token", ts.accessToken());
-            session.setAttribute("refresh_token", ts.refreshToken());
-            session.setAttribute("token_exp", ts.expiresEpochSeconds());
-            access = ts.accessToken();
-        }
-        String fhirBase = (String) session.getAttribute("runtime_fhir_base");
-        if (fhirBase == null || fhirBase.isBlank()) fhirBase = props.getFhirBase();
-        Bundle bundle = fhir.searchPatients(fhirBase, access, 5);
-        var names = bundle.getEntry().stream().map(e -> e.getResource()).filter(r -> r instanceof org.hl7.fhir.r4.model.Patient)
-                .map(r -> (org.hl7.fhir.r4.model.Patient) r).map(p -> p.getName().stream().findFirst().map(HumanName::getNameAsSingleString).orElse("(no name)")).collect(Collectors.toList());
-        model.addAttribute("count", bundle.getEntry().size());
-        model.addAttribute("names", names);
-        return "patients";
-    }
+
+    private static String url(String v){ return URLEncoder.encode(v, StandardCharsets.UTF_8); }
 }
