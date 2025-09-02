@@ -1,10 +1,8 @@
 package com.example.smartspring.config;
 
-import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-@Data
 @Component
 @ConfigurationProperties(prefix = "smart")
 public class AppProperties {
@@ -14,4 +12,53 @@ public class AppProperties {
   private String redirectUri = "http://127.0.0.1:8080/callback";
   private String scopes = "launch/patient patient.read openid fhirUser offline_access";
   private String launch; // optional for standalone EHR-like launch
+
+  // Getters and Setters
+  public String getFhirBase() {
+    return fhirBase;
+  }
+
+  public void setFhirBase(String fhirBase) {
+    this.fhirBase = fhirBase;
+  }
+
+  public String getClientId() {
+    return clientId;
+  }
+
+  public void setClientId(String clientId) {
+    this.clientId = clientId;
+  }
+
+  public String getClientSecret() {
+    return clientSecret;
+  }
+
+  public void setClientSecret(String clientSecret) {
+    this.clientSecret = clientSecret;
+  }
+
+  public String getRedirectUri() {
+    return redirectUri;
+  }
+
+  public void setRedirectUri(String redirectUri) {
+    this.redirectUri = redirectUri;
+  }
+
+  public String getScopes() {
+    return scopes;
+  }
+
+  public void setScopes(String scopes) {
+    this.scopes = scopes;
+  }
+
+  public String getLaunch() {
+    return launch;
+  }
+
+  public void setLaunch(String launch) {
+    this.launch = launch;
+  }
 }
