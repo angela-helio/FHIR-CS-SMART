@@ -22,7 +22,6 @@ import org.hl7.fhir.r4.model.Medication;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
 
 @Controller
 public class FhirController {

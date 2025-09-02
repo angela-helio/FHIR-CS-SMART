@@ -7,7 +7,6 @@ import com.example.smartspring.oauth.TokenService;
 import com.nimbusds.oauth2.sdk.id.State;
 import com.nimbusds.oauth2.sdk.*;
 import com.nimbusds.oauth2.sdk.pkce.*;
-import com.nimbusds.oauth2.sdk.id.ClientID;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -53,7 +52,6 @@ public class AuthController {
         var endpoints = discovery.discover(fhirBase);
         String verifierStr = PkceUtil.generateCodeVerifier();
         String challenge = PkceUtil.codeChallengeS256(verifierStr);
-        CodeVerifier verifier = new CodeVerifier(verifierStr);
         State state = new State();
         String authorize = endpoints.authorizationEndpoint().toString()
                 + "?response_type=code"

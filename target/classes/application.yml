@@ -4,12 +4,51 @@ server:
 smart:
   # For standalone testing only. In EHR launch, these come from `iss` and `launch` query params.
   fhirBase: "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/CP00101/"
-  clientId: "09D58C5A-8712-4E7F-85ED-73140C665CAE"
-  clientSecret: "1C669E09918B"
-  redirectUri: "http://127.0.0.1:8080/callback"
+  clientId: "${VERADIGM_CLIENT_ID:YOUR_VERADIGM_CLIENT_ID}"
+  clientSecret: "${VERADIGM_CLIENT_SECRET:YOUR_VERADIGM_CLIENT_SECRET}"
+  redirectUri: "${SMART_REDIRECT_URI:http://127.0.0.1:8080/callback}"
   scopes: "launch/patient patient.read openid fhirUser offline_access"
   # launch: ""
+  
+  # Backend service authentication (for System-type apps)
+  jwks:
+    keyId: "${JWKS_KEY_ID:#{null}}"
+  backend:
+    enabled: "${BACKEND_AUTH_ENABLED:false}"
+    scopes: "${BACKEND_SCOPES:system/*.read}"
 
 spring:
   thymeleaf:
     cache: false
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+---
+# Development Profile
+spring:
+  config:
+    activate:
+      on-profile: dev
+smart:
+  fhirBase: "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/CP00101/"
+  redirectUri: "http://127.0.0.1:8080/callback"
+
+---
+# ngrok Profile (for external testing)
+spring:
+  config:
+    activate:
+      on-profile: ngrok
+smart:
+  fhirBase: "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/CP00101/"
+  redirectUri: "${NGROK_URL}/callback"
+
+---
+# Production Profile  
+spring:
+  config:
+    activate:
+      on-profile: prod
+smart:
+  fhirBase: "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/CP00101/"
+  redirectUri: "${PRODUCTION_REDIRECT_URI}"
