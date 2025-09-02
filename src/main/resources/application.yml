@@ -9,7 +9,7 @@ smart:
   redirectUri: "${SMART_REDIRECT_URI:http://127.0.0.1:8080/callback}"
   scopes: "launch/patient patient.read openid fhirUser offline_access"
   # launch: ""
-  
+
   # Backend service authentication (for System-type apps)
   jwks:
     keyId: "${JWKS_KEY_ID:#{null}}"
@@ -44,7 +44,7 @@ smart:
   redirectUri: "${NGROK_URL}/callback"
 
 ---
-# Production Profile  
+# Production Profile
 spring:
   config:
     activate:
