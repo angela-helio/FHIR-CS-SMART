@@ -4,9 +4,9 @@ server:
 smart:
   # For standalone testing only. In EHR launch, these come from `iss` and `launch` query params.
   fhirBase: "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/CP00101/"
-  clientId: "${VERADIGM_CLIENT_ID:YOUR_VERADIGM_CLIENT_ID}"
-  clientSecret: "${VERADIGM_CLIENT_SECRET:YOUR_VERADIGM_CLIENT_SECRET}"
-  redirectUri: "${SMART_REDIRECT_URI:http://127.0.0.1:8080/callback}"
+  clientId: "${VERADIGM_CLIENT_ID:09d5c8e8-9712-4c7f-85ed-7514d565fcae}"
+  clientSecret: "${VERADIGM_CLIENT_SECRET:1C669E09918B}"
+  redirectUri: "${SMART_REDIRECT_URI:https://56fc328c2d08.ngrok-free.app/callback}"
   scopes: "launch/patient patient.read openid fhirUser offline_access"
   # launch: ""
 
@@ -41,7 +41,7 @@ spring:
       on-profile: ngrok
 smart:
   fhirBase: "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/CP00101/"
-  redirectUri: "${NGROK_URL}/callback"
+  redirectUri: "https://56fc328c20d8.ngrok-free.app/callback"
 
 ---
 # Production Profile
