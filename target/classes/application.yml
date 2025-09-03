@@ -21,9 +21,9 @@ smart:
   fhirBase: "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/CP00101/"
 
   # OAuth Client Credentials (obtained from Veradigm Connect portal)
-  # These are confidential client credentials for server-to-server authentication
+  # Public client configuration - no client secret required
   clientId: "09D58C5A-8712-4E7F-85ED-73140C665CAE"
-  clientSecret: "1C669E09918B"
+  # clientSecret: "1C669E09918B"
 
   # OAuth Redirect URI - Must match exactly what's registered in Veradigm Connect
   # Currently configured for ngrok tunnel: https://3548ade0e38f.ngrok-free.app
