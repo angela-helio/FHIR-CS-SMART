@@ -46,7 +46,12 @@ public class FhirController {
         String refresh = (String) session.getAttribute("refresh_token");
         String tokenEndpoint = (String) session.getAttribute("token_endpoint");
         if (exp != null && exp > 0 && java.time.Instant.now().getEpochSecond() > exp - 60 && refresh != null) {
-            var ts = tokens.refresh(java.net.URI.create(tokenEndpoint), props.getClientId(), refresh);
+            TokenService.TokenSet ts = tokens.refresh(
+                    java.net.URI.create(tokenEndpoint),
+                    props.getClientId(),
+                    props.getClientSecret(),
+                    refresh
+            );
             session.setAttribute("access_token", ts.accessToken());
             session.setAttribute("refresh_token", ts.refreshToken());
             session.setAttribute("token_exp", ts.expiresEpochSeconds());
@@ -101,7 +106,12 @@ public class FhirController {
         String tokenEndpoint = (String) session.getAttribute("token_endpoint");
         if (access == null) return new RedirectView("/");
         if (exp != null && exp > 0 && Instant.now().getEpochSecond() > exp - 60 && refresh != null) {
-            var ts = tokens.refresh(java.net.URI.create(tokenEndpoint), props.getClientId(), refresh);
+            TokenService.TokenSet ts = tokens.refresh(
+                    java.net.URI.create(tokenEndpoint),
+                    props.getClientId(),
+                    props.getClientSecret(),
+                    refresh
+            );
             session.setAttribute("access_token", ts.accessToken());
             session.setAttribute("refresh_token", ts.refreshToken());
             session.setAttribute("token_exp", ts.expiresEpochSeconds());

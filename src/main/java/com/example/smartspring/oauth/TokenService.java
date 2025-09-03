@@ -6,6 +6,9 @@ import com.nimbusds.oauth2.sdk.id.ClientID;
 import com.nimbusds.oauth2.sdk.pkce.CodeVerifier;
 import com.nimbusds.oauth2.sdk.token.AccessToken;
 import com.nimbusds.oauth2.sdk.token.RefreshToken;
+import com.nimbusds.oauth2.sdk.auth.ClientAuthentication;
+import com.nimbusds.oauth2.sdk.auth.ClientSecretBasic;
+import com.nimbusds.oauth2.sdk.auth.Secret;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -14,13 +17,20 @@ import java.util.Map;
 @Service
 public class TokenService {
 
-  public TokenSet exchangeCode(URI tokenEndpoint, String clientId, String redirectUri,
+  public TokenSet exchangeCode(URI tokenEndpoint, String clientId, String clientSecret, String redirectUri,
                                AuthorizationCode code, CodeVerifier verifier) {
     try {
       AuthorizationGrant codeGrant = new AuthorizationCodeGrant(code, new URI(redirectUri), verifier);
 
-      // Client Public (PKCE): use ClientID
-      TokenRequest req = new TokenRequest(tokenEndpoint, new ClientID(clientId), codeGrant);
+      // Prefer confidential client auth when a clientSecret is provided; otherwise fall back to public client (PKCE)
+      TokenRequest req;
+      if (clientSecret != null && !clientSecret.isBlank()) {
+        ClientAuthentication clientAuth = new ClientSecretBasic(new ClientID(clientId), new Secret(clientSecret));
+        req = new TokenRequest(tokenEndpoint, clientAuth, codeGrant);
+      } else {
+        // Public client (PKCE)
+        req = new TokenRequest(tokenEndpoint, new ClientID(clientId), codeGrant);
+      }
 
       HTTPResponse httpResp = req.toHTTPRequest().send();
       TokenResponse tr = TokenResponse.parse(httpResp);
@@ -48,10 +58,16 @@ public class TokenService {
     }
   }
 
-  public TokenSet refresh(URI tokenEndpoint, String clientId, String refreshToken) {
+  public TokenSet refresh(URI tokenEndpoint, String clientId, String clientSecret, String refreshToken) {
     try {
       RefreshTokenGrant grant = new RefreshTokenGrant(new RefreshToken(refreshToken));
-      TokenRequest req = new TokenRequest(tokenEndpoint, new ClientID(clientId), grant);
+      TokenRequest req;
+      if (clientSecret != null && !clientSecret.isBlank()) {
+        ClientAuthentication clientAuth = new ClientSecretBasic(new ClientID(clientId), new Secret(clientSecret));
+        req = new TokenRequest(tokenEndpoint, clientAuth, grant);
+      } else {
+        req = new TokenRequest(tokenEndpoint, new ClientID(clientId), grant);
+      }
 
       HTTPResponse httpResp = req.toHTTPRequest().send();
       TokenResponse tr = TokenResponse.parse(httpResp);

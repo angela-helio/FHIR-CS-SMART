@@ -1,54 +1,121 @@
+# =============================================================================
+# SMART on FHIR Spring Boot Application Configuration
+# =============================================================================
+# This configuration supports Veradigm/Allscripts SMART on FHIR integration
+# with both standalone and EHR launch workflows.
+#
+# IMPORTANT: This file contains hardcoded credentials for development/testing.
+# Do NOT commit this file to public repositories.
+# =============================================================================
+
 server:
   port: 8080
 
 smart:
-  # For standalone testing only. In EHR launch, these come from `iss` and `launch` query params.
+  # =============================================================================
+  # VERADIGM SMART ON FHIR CONFIGURATION
+  # =============================================================================
+
+  # FHIR Base URL - Veradigm Sandbox Environment (NO /pro/ for sandbox)
+  # For production, use your organization's specific FHIR endpoint
   fhirBase: "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/CP00101/"
-  clientId: "${VERADIGM_CLIENT_ID:09d5c8e8-9712-4c7f-85ed-7514d565fcae}"
-  clientSecret: "${VERADIGM_CLIENT_SECRET:1C669E09918B}"
-  redirectUri: "${SMART_REDIRECT_URI:https://56fc328c2d08.ngrok-free.app/callback}"
-  scopes: "launch/patient patient.read openid fhirUser offline_access"
+
+  # OAuth Client Credentials (obtained from Veradigm Connect portal)
+  # These are confidential client credentials for server-to-server authentication
+  clientId: "09D58C5A-8712-4E7F-85ED-73140C665CAE"
+  clientSecret: "1C669E09918B"
+
+  # OAuth Redirect URI - Must match exactly what's registered in Veradigm Connect
+  # Currently configured for ngrok tunnel: https://3548ade0e38f.ngrok-free.app
+  # Update this URL when ngrok tunnel changes
+  redirectUri: "https://3548ade0e38f.ngrok-free.app/callback"
+
+  # SMART Scopes - Defines what data the app can access
+  # Standalone launch: minimal scopes (no launch/patient)
+  # EHR launch: launch/patient will be added automatically when launch param exists
+  # patient/*.read: Read access to patient data (wildcard format)
+  # openid fhirUser: User identity and FHIR user info
+  # offline_access: Enables refresh tokens for long-term access
+  scopes: "openid fhirUser offline_access patient/*.read"
+
+  # EHR Launch Parameter (populated automatically during EHR launch)
   # launch: ""
 
-  # Backend service authentication (for System-type apps)
+  # =============================================================================
+  # BACKEND SERVICE AUTHENTICATION (System-Level Access)
+  # =============================================================================
+  # Used for backend services that need to access FHIR data without user context
+  # Requires JWT-based client assertion authentication
   jwks:
-    keyId: "${JWKS_KEY_ID:#{null}}"
+    keyId: null # Set this for backend service authentication
   backend:
-    enabled: "${BACKEND_AUTH_ENABLED:false}"
-    scopes: "${BACKEND_SCOPES:system/*.read}"
+    enabled: false # Enable for system-level FHIR access
+    scopes: "system/*.read" # System scopes for backend access
 
+# =============================================================================
+# SPRING BOOT CONFIGURATION
+# =============================================================================
 spring:
   thymeleaf:
-    cache: false
+    cache: false # Disable template caching for development
   profiles:
-    active: ${SPRING_PROFILES_ACTIVE:dev}
+    active: ngrok # Active profile: dev, ngrok, or prod
+    # Change this to switch between environments:
+    # - dev: Local development (localhost)
+    # - ngrok: External testing (ngrok tunnel)
+    # - prod: Production deployment
+
+# =============================================================================
+# SPRING PROFILES CONFIGURATION
+# =============================================================================
+# Different environments can override the default configuration above
 
 ---
-# Development Profile
+# =============================================================================
+# DEVELOPMENT PROFILE (Local Development)
+# =============================================================================
+# Use this profile for local development with localhost URLs
+# Activate with: --spring.profiles.active=dev
 spring:
   config:
     activate:
       on-profile: dev
 smart:
+  # Use Veradigm sandbox for development (NO /pro/ for sandbox)
   fhirBase: "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/CP00101/"
+  # Local redirect URI for development
   redirectUri: "http://127.0.0.1:8080/callback"
 
 ---
-# ngrok Profile (for external testing)
+# =============================================================================
+# NGROK PROFILE (External Testing)
+# =============================================================================
+# Use this profile when testing with external EHR systems via ngrok tunnel
+# Activate with: --spring.profiles.active=ngrok
+# IMPORTANT: Update redirectUri when ngrok URL changes
 spring:
   config:
     activate:
       on-profile: ngrok
 smart:
+  # Use Veradigm sandbox for testing (NO /pro/ for sandbox)
   fhirBase: "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/CP00101/"
-  redirectUri: "https://56fc328c20d8.ngrok-free.app/callback"
+  # ngrok tunnel URL - UPDATE THIS WHEN NGROK URL CHANGES
+  redirectUri: "https://3548ade0e38f.ngrok-free.app/callback"
 
 ---
-# Production Profile
+# =============================================================================
+# PRODUCTION PROFILE (Live Environment)
+# =============================================================================
+# Use this profile for production deployment
+# Activate with: --spring.profiles.active=prod
+# IMPORTANT: Update URLs and credentials for production environment
 spring:
   config:
     activate:
       on-profile: prod
 smart:
+  # Production FHIR endpoint (update for your organization)
   fhirBase: "https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/CP00101/"
-  redirectUri: "${PRODUCTION_REDIRECT_URI}"
+  # Production redirect URI (update for your domain)
+  redirectUri: "https://3548ade0e38f.ngrok-free.app/callback"

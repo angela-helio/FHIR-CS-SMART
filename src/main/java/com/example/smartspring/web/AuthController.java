@@ -47,12 +47,29 @@ public class AuthController {
         try {
             String fhirBase = (String) session.getAttribute("runtime_fhir_base");
             if (fhirBase == null || fhirBase.isBlank()) fhirBase = props.getFhirBase();
+            String aud = fhirBase.replaceAll("/+$", "");  // strip trailing slash
             
             String launchParam = (String) session.getAttribute("runtime_launch");
             if ((launchParam == null || launchParam.isBlank()) && props.getLaunch() != null && !props.getLaunch().isBlank())
                 launchParam = props.getLaunch();
             
             var endpoints = discovery.discover(fhirBase);
+            
+            // Environment mismatch guard
+            boolean audIsPro = aud.contains("/pro/");
+            boolean authIsPro = endpoints.authorizationEndpoint().toString().contains("/pro/");
+            if (audIsPro != authIsPro) {
+                throw new IllegalStateException(
+                    "Environment mismatch: aud=" + aud +
+                    " authorize=" + endpoints.authorizationEndpoint());
+            }
+            
+            // Scopes - standalone default (no launch/patient)
+            String scopes = props.getScopes();
+            if (launchParam != null && !launchParam.isBlank() && !scopes.contains("launch/patient")) {
+                scopes += " launch/patient";
+            }
+            
             String verifierStr = PkceUtil.generateCodeVerifier();
             String challenge = PkceUtil.codeChallengeS256(verifierStr);
             State state = new State();
@@ -61,13 +78,18 @@ public class AuthController {
                     + "?response_type=code"
                     + "&client_id=" + url(props.getClientId())
                     + "&redirect_uri=" + url(props.getRedirectUri())
-                    + "&scope=" + url(props.getScopes())
+                    + "&scope=" + url(scopes.trim())
                     + "&state=" + url(state.getValue())
                     + "&code_challenge=" + url(challenge)
                     + "&code_challenge_method=" + CodeChallengeMethod.S256.getValue()
-                    + "&aud=" + url(fhirBase);
+                    + "&aud=" + url(aud);
             
-            if (launchParam != null && !launchParam.isBlank()) authorize += "&launch=" + url(launchParam);
+            if (launchParam != null && !launchParam.isBlank()) {
+                authorize += "&launch=" + url(launchParam);
+            }
+            
+            System.out.printf("Authorize (redacted) → %s%n", authorize.replaceAll("state=[^&]+", "state=REDACTED")
+                                                                      .replaceAll("code_challenge=[^&]+", "code_challenge=REDACTED"));
             
             session.setAttribute("code_verifier", verifierStr);
             session.setAttribute("oauth_state", state.getValue());
@@ -119,7 +141,14 @@ public class AuthController {
                 return rv;
             }
             
-            var token = tokenService.exchangeCode(URI.create(tokenEndpoint), props.getClientId(), props.getRedirectUri(), new AuthorizationCode(code), new CodeVerifier(verifier));
+            var token = tokenService.exchangeCode(
+                    URI.create(tokenEndpoint),
+                    props.getClientId(),
+                    props.getClientSecret(),
+                    props.getRedirectUri(),
+                    new AuthorizationCode(code),
+                    new CodeVerifier(verifier)
+            );
             session.setAttribute("access_token", token.accessToken());
             session.setAttribute("refresh_token", token.refreshToken());
             session.setAttribute("token_exp", token.expiresEpochSeconds());

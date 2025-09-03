@@ -38,6 +38,9 @@ public class SmartDiscoveryService {
     public SmartEndpoints discover(String fhirBase) {
         String base = fhirBase.replaceAll("/+$", "");
         
+        System.out.printf("=== SMART DISCOVERY DEBUG ===%n");
+        System.out.printf("FHIR Base: %s%n", fhirBase);
+        
         try {
             HttpResponse<String> r = httpClient.send(
                 HttpRequest.newBuilder(URI.create(base + "/.well-known/smart-configuration"))
@@ -50,7 +53,12 @@ public class SmartDiscoveryService {
                 JsonNode j = M.readTree(r.body());
                 String a = j.path("authorization_endpoint").asText(null);
                 String t = j.path("token_endpoint").asText(null);
-                if (a != null && t != null) return new SmartEndpoints(URI.create(a), URI.create(t));
+                if (a != null && t != null) {
+                    System.out.printf("Found via .well-known/smart-configuration:%n");
+                    System.out.printf("  Authorization: %s%n", a);
+                    System.out.printf("  Token: %s%n", t);
+                    return new SmartEndpoints(URI.create(a), URI.create(t));
+                }
             }
         } catch (Exception ignore) {
             // Fall through to metadata endpoint
@@ -81,8 +89,12 @@ public class SmartDiscoveryService {
                                 if (k.endsWith("authorize")) auth = v;
                                 if (k.endsWith("token")) tok = v;
                             }
-                            if (auth != null && tok != null) 
+                            if (auth != null && tok != null) {
+                                System.out.printf("Found via /metadata:%n");
+                                System.out.printf("  Authorization: %s%n", auth);
+                                System.out.printf("  Token: %s%n", tok);
                                 return new SmartEndpoints(URI.create(auth), URI.create(tok));
+                            }
                         }
                     }
                 }
