@@ -1,1 +1,644 @@
-<Conformance xmlns="http://hl7.org/fhir"><meta><versionId value="8" /><lastUpdated value="2016-09-26T16:34:00-04:00" /></meta><language value="en-US" /><text><status value="generated" /></text><url value="https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/CustProProdSand201SMART" /><version value="1.0.1" /><name value="Allscripts FHIR Server Implementation" /><status value="active" /><experimental value="false" /><publisher value="Allscripts" /><contact><name value="Jeffrey Danford" /><telecom><system value="email" /><value value="jeffrey.danford@allscripts.com" /><use value="work" /></telecom><telecom><system value="phone" /><value value="919-329-1870" /><use value="work" /></telecom></contact><contact><name value="Jason Tithof" /><telecom><system value="email" /><value value="jason.tithof@allscripts.com" /><use value="work" /></telecom><telecom><system value="phone" /><value value="" /><use value="work" /></telecom></contact><contact><name value="Gunther Meyer" /><telecom><system value="email" /><value value="gunther.meyer@allscripts.com" /><use value="work" /></telecom><telecom><system value="phone" /><value value="" /><use value="work" /></telecom></contact><contact><name value="Manoj Sharma" /><telecom><system value="email" /><value value="manoj.sharma2@allscripts.com" /><use value="work" /></telecom><telecom><system value="phone" /><value value="" /><use value="work" /></telecom></contact><date value="2016-09-30" /><description value="Conformance statement for Allscripts FHIR service." /><requirements value="FHIR API conformance statement, published for contracting, operational and regulatory support" /><copyright value="Copyright 2015 Allscripts Healthcare Solutions, Inc.. All rights reserved" /><kind value="instance" /><software><name value="Allscripts FHIR" /><version value="21.1.2124.2125" /><releaseDate value="2021-05-11" /></software><implementation><description value="Local Client Implementation" /><url value="https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/CustProProdSand201SMART" /></implementation><fhirVersion value="1.0.2" /><acceptUnknown value="both" /><format value="xml" /><format value="json" /><profile><reference value="http://hl7.org/fhir/StructureDefinition/daf-allergyintolerance" /><display value="U.S. Data Access Framework (DAF) AllergyIntolerance Profile" /></profile><profile><reference value="http://hl7.org/fhir/StructureDefinition/daf-condition" /><display value="U.S. Data Access Framework (DAF) Condition Profile" /></profile><profile><reference value="http://hl7.org/fhir/StructureDefinition/daf-diagnosticorder" /><display value="U.S. Data Access Framework (DAF) DiagnosticOrder Profile" /></profile><profile><reference value="http://hl7.org/fhir/StructureDefinition/daf-diagnosticreport" /><display value="U.S. Data Access Framework (DAF) DiagnosticReport Profile" /></profile><profile><reference value="http://hl7.org/fhir/StructureDefinition/daf-immunization" /><display value="U.S. Data Access Framework (DAF) Immunization Profile" /></profile><profile><reference value="http://hl7.org/fhir/StructureDefinition/daf-medicationorder" /><display value="U.S. Data Access Framework (DAF) MedicationOrder Profile" /></profile><profile><reference value="http://hl7.org/fhir/StructureDefinition/daf-medicationstatement" /><display value="U.S. Data Access Framework (DAF) MedicationStatement Profile" /></profile><profile><reference value="http://hl7.org/fhir/StructureDefinition/daf-patient" /><display value="U.S. Data Access Framework (DAF) Patient Profile" /></profile><profile><reference value="http://hl7.org/fhir/StuctureDefinition/daf-procedure" /><display value="U.S. Data Access Framework (DAF) Procedure Profile" /></profile><profile><reference value="http://hl7.org/fhir/StructureDefinition/daf-resultobs" /><display value="U.S. Data Access Framework (DAF) Results Profile" /></profile><profile><reference value="http://hl7.org/fhir/StructureDefinition/daf-smokingstatus" /><display value="U.S. Data Access Framework (DAF) SmokingStatus Profile" /></profile><profile><reference value="http://hl7.org/fhir/StructureDefinition/daf-vitalsigns" /><display value="U.S. Data Access Framework (DAF) VitalSigns Profile" /></profile><rest><mode value="server" /><documentation value="Information about the system's restful capabilities that apply across all applications, such as security" /><security><extension url="http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris"><extension url="authorize"><valueUri value="https://fhir.fhirpoint.open.allscripts.com/fhirroute/authorization/CustProProdSand201SMART/connect/authorize" /></extension><extension url="token"><valueUri value="https://fhir.fhirpoint.open.allscripts.com/fhirroute/authorization/CustProProdSand201SMART/connect/token" /></extension></extension><cors value="true" /><service><coding><system value="http://hl7.org/fhir/restful-security-service" /><code value="SMART-on-FHIR" /></coding></service><description value="General description of how security works" /><certificate><type value="json" /></certificate></security><resource><type value="AllergyIntolerance" /><profile><reference value="StructureDefinition" /><display value="Definition of capabilities for the resource" /></profile><interaction><code value="read" /><documentation value="" /></interaction><interaction><code value="search-type" /></interaction><versioning value="no-version" /><readHistory value="false" /><updateCreate value="false" /><conditionalCreate value="false" /><conditionalUpdate value="false" /><conditionalDelete value="not-supported" /><searchParam><name value="patient" /><type value="reference" /><target value="Patient" /></searchParam><searchParam><name value="date" /><type value="date" /><documentation value="" /></searchParam></resource><resource><type value="Condition" /><profile><reference value="StructureDefinition" /><display value="Definition of capabilities for the resource" /></profile><interaction><code value="read" /><documentation value="" /></interaction><interaction><code value="search-type" /></interaction><versioning value="no-version" /><readHistory value="false" /><updateCreate value="false" /><conditionalCreate value="false" /><conditionalUpdate value="false" /><conditionalDelete value="not-supported" /><searchParam><name value="patient" /><type value="reference" /><target value="Patient" /></searchParam><searchParam><name value="clinicalstatus" /><type value="token" /></searchParam><searchParam><name value="category" /><type value="token" /></searchParam><searchParam><name value="date" /><type value="date" /><documentation value="" /></searchParam></resource><resource><type value="DiagnosticOrder" /><profile><reference value="StructureDefinition" /><display value="Definition of capabilities for the resource" /></profile><interaction><code value="read" /><documentation value="" /></interaction><interaction><code value="search-type" /></interaction><versioning value="no-version" /><readHistory value="false" /><updateCreate value="false" /><conditionalCreate value="false" /><conditionalUpdate value="false" /><conditionalDelete value="not-supported" /><searchParam><name value="patient" /><type value="reference" /><target value="Patient" /></searchParam><searchParam><name value="date" /><type value="date" /><documentation value="" /></searchParam></resource><resource><type value="DiagnosticReport" /><profile><reference value="StructureDefinition" /><display value="Definition of capabilities for the resource" /></profile><interaction><code value="read" /><documentation value="" /></interaction><interaction><code value="search-type" /></interaction><versioning value="no-version" /><readHistory value="false" /><updateCreate value="false" /><conditionalCreate value="false" /><conditionalUpdate value="false" /><conditionalDelete value="not-supported" /><searchParam><name value="patient" /><type value="reference" /><target value="Patient" /></searchParam><searchParam><name value="category" /><type value="token" /></searchParam><searchParam><name value="code" /><type value="token" /></searchParam><searchParam><name value="date" /><type value="date" /><documentation value="" /></searchParam></resource><resource><type value="Immunization" /><profile><reference value="StructureDefinition" /><display value="Definition of capabilities for the resource" /></profile><interaction><code value="read" /><documentation value="" /></interaction><interaction><code value="search-type" /></interaction><versioning value="no-version" /><readHistory value="false" /><updateCreate value="false" /><conditionalCreate value="false" /><conditionalUpdate value="false" /><conditionalDelete value="not-supported" /><searchParam><name value="patient" /><type value="reference" /><target value="Patient" /></searchParam><searchParam><name value="date" /><type value="date" /><documentation value="" /></searchParam></resource><resource><type value="MedicationOrder" /><profile><reference value="StructureDefinition" /><display value="Definition of capabilities for the resource" /></profile><interaction><code value="read" /><documentation value="" /></interaction><interaction><code value="search-type" /></interaction><versioning value="no-version" /><readHistory value="false" /><updateCreate value="false" /><conditionalCreate value="false" /><conditionalUpdate value="false" /><conditionalDelete value="not-supported" /><searchParam><name value="patient" /><type value="reference" /><target value="Patient" /></searchParam><searchParam><name value="date" /><type value="date" /><documentation value="" /></searchParam></resource><resource><type value="MedicationStatement" /><profile><reference value="StructureDefinition" /><display value="Definition of capabilities for the resource" /></profile><interaction><code value="read" /><documentation value="" /></interaction><interaction><code value="search-type" /></interaction><versioning value="no-version" /><readHistory value="false" /><updateCreate value="false" /><conditionalCreate value="false" /><conditionalUpdate value="false" /><conditionalDelete value="not-supported" /><searchParam><name value="patient" /><type value="reference" /><target value="Patient" /></searchParam><searchParam><name value="date" /><type value="date" /><documentation value="" /></searchParam></resource><resource><type value="Patient" /><profile><reference value="StructureDefinition" /><display value="Definition of capabilities for the resource" /></profile><interaction><code value="read" /><documentation value="" /></interaction><interaction><code value="search-type" /></interaction><versioning value="no-version" /><readHistory value="false" /><updateCreate value="false" /><conditionalCreate value="false" /><conditionalUpdate value="false" /><conditionalDelete value="not-supported" /><searchParam><name value="_id" /><type value="token" /></searchParam><searchParam><name value="identifier" /><type value="token" /></searchParam><searchParam><name value="name" /><type value="string" /></searchParam><searchParam><name value="gender" /><type value="token" /></searchParam><searchParam><name value="birthdate" /><type value="date" /></searchParam><searchParam><name value="family" /><type value="string" /></searchParam><searchParam><name value="given" /><type value="string" /></searchParam></resource><resource><type value="Procedure" /><profile><reference value="StructureDefinition" /><display value="Definition of capabilities for the resource" /></profile><interaction><code value="read" /><documentation value="" /></interaction><interaction><code value="search-type" /></interaction><versioning value="no-version" /><readHistory value="false" /><updateCreate value="false" /><conditionalCreate value="false" /><conditionalUpdate value="false" /><conditionalDelete value="not-supported" /><searchParam><name value="patient" /><type value="reference" /><target value="Patient" /></searchParam><searchParam><name value="date" /><type value="date" /><documentation value="" /></searchParam></resource><resource><type value="Observation" /><profile><reference value="StructureDefinition" /><display value="Definition of capabilities for the resource" /></profile><interaction><code value="read" /><documentation value="" /></interaction><interaction><code value="search-type" /></interaction><versioning value="no-version" /><readHistory value="false" /><updateCreate value="false" /><conditionalCreate value="false" /><conditionalUpdate value="false" /><conditionalDelete value="not-supported" /><searchParam><name value="patient" /><type value="reference" /><target value="Patient" /></searchParam><searchParam><name value="category" /><type value="token" /></searchParam><searchParam><name value="code" /><type value="token" /></searchParam><searchParam><name value="date" /><type value="date" /><documentation value="" /></searchParam></resource><resource><type value="Goal" /><profile><reference value="StructureDefinition" /><display value="Definition of capabilities for the resource" /></profile><interaction><code value="read" /><documentation value="" /></interaction><interaction><code value="search-type" /></interaction><versioning value="no-version" /><readHistory value="false" /><updateCreate value="false" /><conditionalCreate value="false" /><conditionalUpdate value="false" /><conditionalDelete value="not-supported" /><searchParam><name value="patient" /><type value="reference" /><target value="Patient" /></searchParam><searchParam><name value="date" /><type value="date" /><documentation value="" /></searchParam></resource><resource><type value="Device" /><profile><reference value="StructureDefinition" /><display value="Definition of capabilities for the resource" /></profile><interaction><code value="read" /><documentation value="" /></interaction><interaction><code value="search-type" /></interaction><versioning value="no-version" /><readHistory value="false" /><updateCreate value="false" /><conditionalCreate value="false" /><conditionalUpdate value="false" /><conditionalDelete value="not-supported" /><searchParam><name value="patient" /><type value="reference" /><target value="Patient" /></searchParam><searchParam><name value="date" /><type value="date" /><documentation value="" /></searchParam></resource><resource><type value="CarePlan" /><profile><reference value="StructureDefinition" /><display value="Definition of capabilities for the resource" /></profile><interaction><code value="read" /><documentation value="" /></interaction><interaction><code value="search-type" /></interaction><versioning value="no-version" /><readHistory value="false" /><updateCreate value="false" /><conditionalCreate value="false" /><conditionalUpdate value="false" /><conditionalDelete value="not-supported" /><searchParam><name value="patient" /><type value="reference" /><target value="Patient" /></searchParam><searchParam><name value="category" /><type value="token" /></searchParam><searchParam><name value="status" /><type value="token" /></searchParam><searchParam><name value="date" /><type value="date" /><documentation value="" /></searchParam></resource><resource><type value="DocumentReference" /><profile><reference value="StructureDefinition" /><display value="Definition of capabilities for the resource" /></profile><interaction><code value="read" /><documentation value="" /></interaction><interaction><code value="search-type" /></interaction><versioning value="no-version" /><readHistory value="false" /><updateCreate value="false" /><conditionalCreate value="false" /><conditionalUpdate value="false" /><conditionalDelete value="not-supported" /><searchParam><name value="patient" /><type value="reference" /><target value="Patient" /></searchParam><searchParam><name value="date" /><type value="date" /><documentation value="" /></searchParam></resource><transactionMode value="not-supported" /><operation><name value="evaluate" /><definition><reference value="OperationDefinition" /><display value="Evaluation Operation" /></definition></operation><compartment value="https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/CustProProdSand201SMART/patient" /></rest></Conformance>
+<Conformance xmlns="http://hl7.org/fhir">
+    <meta>
+        <versionId value="8" />
+        <lastUpdated value="2016-09-26T16:34:00-04:00" />
+    </meta>
+    <language value="en-US" />
+    <text>
+        <status value="generated" />
+    </text>
+    <url value="https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/CustProProdSand201SMART" />
+    <version value="1.0.1" />
+    <name value="Allscripts FHIR Server Implementation" />
+    <status value="active" />
+    <experimental value="false" />
+    <publisher value="Allscripts" />
+    <contact>
+        <name value="Jeffrey Danford" />
+        <telecom>
+            <system value="email" />
+            <value value="jeffrey.danford@allscripts.com" />
+            <use value="work" />
+        </telecom>
+        <telecom>
+            <system value="phone" />
+            <value value="919-329-1870" />
+            <use value="work" />
+        </telecom>
+    </contact>
+    <contact>
+        <name value="Jason Tithof" />
+        <telecom>
+            <system value="email" />
+            <value value="jason.tithof@allscripts.com" />
+            <use value="work" />
+        </telecom>
+        <telecom>
+            <system value="phone" />
+            <value value="" />
+            <use value="work" />
+        </telecom>
+    </contact>
+    <contact>
+        <name value="Gunther Meyer" />
+        <telecom>
+            <system value="email" />
+            <value value="gunther.meyer@allscripts.com" />
+            <use value="work" />
+        </telecom>
+        <telecom>
+            <system value="phone" />
+            <value value="" />
+            <use value="work" />
+        </telecom>
+    </contact>
+    <contact>
+        <name value="Manoj Sharma" />
+        <telecom>
+            <system value="email" />
+            <value value="manoj.sharma2@allscripts.com" />
+            <use value="work" />
+        </telecom>
+        <telecom>
+            <system value="phone" />
+            <value value="" />
+            <use value="work" />
+        </telecom>
+    </contact>
+    <date value="2016-09-30" />
+    <description value="Conformance statement for Allscripts FHIR service." />
+    <requirements
+        value="FHIR API conformance statement, published for contracting, operational and regulatory support" />
+    <copyright value="Copyright 2015 Allscripts Healthcare Solutions, Inc.. All rights reserved" />
+    <kind value="instance" />
+    <software>
+        <name value="Allscripts FHIR" />
+        <version value="21.1.2124.2125" />
+        <releaseDate value="2021-05-11" />
+    </software>
+    <implementation>
+        <description value="Local Client Implementation" />
+        <url
+            value="https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/CustProProdSand201SMART" />
+    </implementation>
+    <fhirVersion value="1.0.2" />
+    <acceptUnknown value="both" />
+    <format value="xml" />
+    <format value="json" />
+    <profile>
+        <reference value="http://hl7.org/fhir/StructureDefinition/daf-allergyintolerance" />
+        <display value="U.S. Data Access Framework (DAF) AllergyIntolerance Profile" />
+    </profile>
+    <profile>
+        <reference value="http://hl7.org/fhir/StructureDefinition/daf-condition" />
+        <display value="U.S. Data Access Framework (DAF) Condition Profile" />
+    </profile>
+    <profile>
+        <reference value="http://hl7.org/fhir/StructureDefinition/daf-diagnosticorder" />
+        <display value="U.S. Data Access Framework (DAF) DiagnosticOrder Profile" />
+    </profile>
+    <profile>
+        <reference value="http://hl7.org/fhir/StructureDefinition/daf-diagnosticreport" />
+        <display value="U.S. Data Access Framework (DAF) DiagnosticReport Profile" />
+    </profile>
+    <profile>
+        <reference value="http://hl7.org/fhir/StructureDefinition/daf-immunization" />
+        <display value="U.S. Data Access Framework (DAF) Immunization Profile" />
+    </profile>
+    <profile>
+        <reference value="http://hl7.org/fhir/StructureDefinition/daf-medicationorder" />
+        <display value="U.S. Data Access Framework (DAF) MedicationOrder Profile" />
+    </profile>
+    <profile>
+        <reference value="http://hl7.org/fhir/StructureDefinition/daf-medicationstatement" />
+        <display value="U.S. Data Access Framework (DAF) MedicationStatement Profile" />
+    </profile>
+    <profile>
+        <reference value="http://hl7.org/fhir/StructureDefinition/daf-patient" />
+        <display value="U.S. Data Access Framework (DAF) Patient Profile" />
+    </profile>
+    <profile>
+        <reference value="http://hl7.org/fhir/StuctureDefinition/daf-procedure" />
+        <display value="U.S. Data Access Framework (DAF) Procedure Profile" />
+    </profile>
+    <profile>
+        <reference value="http://hl7.org/fhir/StructureDefinition/daf-resultobs" />
+        <display value="U.S. Data Access Framework (DAF) Results Profile" />
+    </profile>
+    <profile>
+        <reference value="http://hl7.org/fhir/StructureDefinition/daf-smokingstatus" />
+        <display value="U.S. Data Access Framework (DAF) SmokingStatus Profile" />
+    </profile>
+    <profile>
+        <reference value="http://hl7.org/fhir/StructureDefinition/daf-vitalsigns" />
+        <display value="U.S. Data Access Framework (DAF) VitalSigns Profile" />
+    </profile>
+    <rest>
+        <mode value="server" />
+        <documentation
+            value="Information about the system's restful capabilities that apply across all applications, such as security" />
+        <security>
+            <extension url="http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris">
+                <extension url="authorize">
+                    <valueUri
+                        value="https://fhir.fhirpoint.open.allscripts.com/fhirroute/authorization/CustProProdSand201SMART/connect/authorize" />
+                </extension>
+                <extension url="token">
+                    <valueUri
+                        value="https://fhir.fhirpoint.open.allscripts.com/fhirroute/authorization/CustProProdSand201SMART/connect/token" />
+                </extension>
+            </extension>
+            <cors value="true" />
+            <service>
+                <coding>
+                    <system value="http://hl7.org/fhir/restful-security-service" />
+                    <code value="SMART-on-FHIR" />
+                </coding>
+            </service>
+            <description value="General description of how security works" />
+            <certificate>
+                <type value="json" />
+            </certificate>
+        </security>
+        <resource>
+            <type value="AllergyIntolerance" />
+            <profile>
+                <reference value="StructureDefinition" />
+                <display value="Definition of capabilities for the resource" />
+            </profile>
+            <interaction>
+                <code value="read" />
+                <documentation value="" />
+            </interaction>
+            <interaction>
+                <code value="search-type" />
+            </interaction>
+            <versioning value="no-version" />
+            <readHistory value="false" />
+            <updateCreate value="false" />
+            <conditionalCreate value="false" />
+            <conditionalUpdate value="false" />
+            <conditionalDelete value="not-supported" />
+            <searchParam>
+                <name value="patient" />
+                <type value="reference" />
+                <target value="Patient" />
+            </searchParam>
+            <searchParam>
+                <name value="date" />
+                <type value="date" />
+                <documentation value="" />
+            </searchParam>
+        </resource>
+        <resource>
+            <type value="Condition" />
+            <profile>
+                <reference value="StructureDefinition" />
+                <display value="Definition of capabilities for the resource" />
+            </profile>
+            <interaction>
+                <code value="read" />
+                <documentation value="" />
+            </interaction>
+            <interaction>
+                <code value="search-type" />
+            </interaction>
+            <versioning value="no-version" />
+            <readHistory value="false" />
+            <updateCreate value="false" />
+            <conditionalCreate value="false" />
+            <conditionalUpdate value="false" />
+            <conditionalDelete value="not-supported" />
+            <searchParam>
+                <name value="patient" />
+                <type value="reference" />
+                <target value="Patient" />
+            </searchParam>
+            <searchParam>
+                <name value="clinicalstatus" />
+                <type value="token" />
+            </searchParam>
+            <searchParam>
+                <name value="category" />
+                <type value="token" />
+            </searchParam>
+            <searchParam>
+                <name value="date" />
+                <type value="date" />
+                <documentation value="" />
+            </searchParam>
+        </resource>
+        <resource>
+            <type value="DiagnosticOrder" />
+            <profile>
+                <reference value="StructureDefinition" />
+                <display value="Definition of capabilities for the resource" />
+            </profile>
+            <interaction>
+                <code value="read" />
+                <documentation value="" />
+            </interaction>
+            <interaction>
+                <code value="search-type" />
+            </interaction>
+            <versioning value="no-version" />
+            <readHistory value="false" />
+            <updateCreate value="false" />
+            <conditionalCreate value="false" />
+            <conditionalUpdate value="false" />
+            <conditionalDelete value="not-supported" />
+            <searchParam>
+                <name value="patient" />
+                <type value="reference" />
+                <target value="Patient" />
+            </searchParam>
+            <searchParam>
+                <name value="date" />
+                <type value="date" />
+                <documentation value="" />
+            </searchParam>
+        </resource>
+        <resource>
+            <type value="DiagnosticReport" />
+            <profile>
+                <reference value="StructureDefinition" />
+                <display value="Definition of capabilities for the resource" />
+            </profile>
+            <interaction>
+                <code value="read" />
+                <documentation value="" />
+            </interaction>
+            <interaction>
+                <code value="search-type" />
+            </interaction>
+            <versioning value="no-version" />
+            <readHistory value="false" />
+            <updateCreate value="false" />
+            <conditionalCreate value="false" />
+            <conditionalUpdate value="false" />
+            <conditionalDelete value="not-supported" />
+            <searchParam>
+                <name value="patient" />
+                <type value="reference" />
+                <target value="Patient" />
+            </searchParam>
+            <searchParam>
+                <name value="category" />
+                <type value="token" />
+            </searchParam>
+            <searchParam>
+                <name value="code" />
+                <type value="token" />
+            </searchParam>
+            <searchParam>
+                <name value="date" />
+                <type value="date" />
+                <documentation value="" />
+            </searchParam>
+        </resource>
+        <resource>
+            <type value="Immunization" />
+            <profile>
+                <reference value="StructureDefinition" />
+                <display value="Definition of capabilities for the resource" />
+            </profile>
+            <interaction>
+                <code value="read" />
+                <documentation value="" />
+            </interaction>
+            <interaction>
+                <code value="search-type" />
+            </interaction>
+            <versioning value="no-version" />
+            <readHistory value="false" />
+            <updateCreate value="false" />
+            <conditionalCreate value="false" />
+            <conditionalUpdate value="false" />
+            <conditionalDelete value="not-supported" />
+            <searchParam>
+                <name value="patient" />
+                <type value="reference" />
+                <target value="Patient" />
+            </searchParam>
+            <searchParam>
+                <name value="date" />
+                <type value="date" />
+                <documentation value="" />
+            </searchParam>
+        </resource>
+        <resource>
+            <type value="MedicationOrder" />
+            <profile>
+                <reference value="StructureDefinition" />
+                <display value="Definition of capabilities for the resource" />
+            </profile>
+            <interaction>
+                <code value="read" />
+                <documentation value="" />
+            </interaction>
+            <interaction>
+                <code value="search-type" />
+            </interaction>
+            <versioning value="no-version" />
+            <readHistory value="false" />
+            <updateCreate value="false" />
+            <conditionalCreate value="false" />
+            <conditionalUpdate value="false" />
+            <conditionalDelete value="not-supported" />
+            <searchParam>
+                <name value="patient" />
+                <type value="reference" />
+                <target value="Patient" />
+            </searchParam>
+            <searchParam>
+                <name value="date" />
+                <type value="date" />
+                <documentation value="" />
+            </searchParam>
+        </resource>
+        <resource>
+            <type value="MedicationStatement" />
+            <profile>
+                <reference value="StructureDefinition" />
+                <display value="Definition of capabilities for the resource" />
+            </profile>
+            <interaction>
+                <code value="read" />
+                <documentation value="" />
+            </interaction>
+            <interaction>
+                <code value="search-type" />
+            </interaction>
+            <versioning value="no-version" />
+            <readHistory value="false" />
+            <updateCreate value="false" />
+            <conditionalCreate value="false" />
+            <conditionalUpdate value="false" />
+            <conditionalDelete value="not-supported" />
+            <searchParam>
+                <name value="patient" />
+                <type value="reference" />
+                <target value="Patient" />
+            </searchParam>
+            <searchParam>
+                <name value="date" />
+                <type value="date" />
+                <documentation value="" />
+            </searchParam>
+        </resource>
+        <resource>
+            <type value="Patient" />
+            <profile>
+                <reference value="StructureDefinition" />
+                <display value="Definition of capabilities for the resource" />
+            </profile>
+            <interaction>
+                <code value="read" />
+                <documentation value="" />
+            </interaction>
+            <interaction>
+                <code value="search-type" />
+            </interaction>
+            <versioning value="no-version" />
+            <readHistory value="false" />
+            <updateCreate value="false" />
+            <conditionalCreate value="false" />
+            <conditionalUpdate value="false" />
+            <conditionalDelete value="not-supported" />
+            <searchParam>
+                <name value="_id" />
+                <type value="token" />
+            </searchParam>
+            <searchParam>
+                <name value="identifier" />
+                <type value="token" />
+            </searchParam>
+            <searchParam>
+                <name value="name" />
+                <type value="string" />
+            </searchParam>
+            <searchParam>
+                <name value="gender" />
+                <type value="token" />
+            </searchParam>
+            <searchParam>
+                <name value="birthdate" />
+                <type value="date" />
+            </searchParam>
+            <searchParam>
+                <name value="family" />
+                <type value="string" />
+            </searchParam>
+            <searchParam>
+                <name value="given" />
+                <type value="string" />
+            </searchParam>
+        </resource>
+        <resource>
+            <type value="Procedure" />
+            <profile>
+                <reference value="StructureDefinition" />
+                <display value="Definition of capabilities for the resource" />
+            </profile>
+            <interaction>
+                <code value="read" />
+                <documentation value="" />
+            </interaction>
+            <interaction>
+                <code value="search-type" />
+            </interaction>
+            <versioning value="no-version" />
+            <readHistory value="false" />
+            <updateCreate value="false" />
+            <conditionalCreate value="false" />
+            <conditionalUpdate value="false" />
+            <conditionalDelete value="not-supported" />
+            <searchParam>
+                <name value="patient" />
+                <type value="reference" />
+                <target value="Patient" />
+            </searchParam>
+            <searchParam>
+                <name value="date" />
+                <type value="date" />
+                <documentation value="" />
+            </searchParam>
+        </resource>
+        <resource>
+            <type value="Observation" />
+            <profile>
+                <reference value="StructureDefinition" />
+                <display value="Definition of capabilities for the resource" />
+            </profile>
+            <interaction>
+                <code value="read" />
+                <documentation value="" />
+            </interaction>
+            <interaction>
+                <code value="search-type" />
+            </interaction>
+            <versioning value="no-version" />
+            <readHistory value="false" />
+            <updateCreate value="false" />
+            <conditionalCreate value="false" />
+            <conditionalUpdate value="false" />
+            <conditionalDelete value="not-supported" />
+            <searchParam>
+                <name value="patient" />
+                <type value="reference" />
+                <target value="Patient" />
+            </searchParam>
+            <searchParam>
+                <name value="category" />
+                <type value="token" />
+            </searchParam>
+            <searchParam>
+                <name value="code" />
+                <type value="token" />
+            </searchParam>
+            <searchParam>
+                <name value="date" />
+                <type value="date" />
+                <documentation value="" />
+            </searchParam>
+        </resource>
+        <resource>
+            <type value="Goal" />
+            <profile>
+                <reference value="StructureDefinition" />
+                <display value="Definition of capabilities for the resource" />
+            </profile>
+            <interaction>
+                <code value="read" />
+                <documentation value="" />
+            </interaction>
+            <interaction>
+                <code value="search-type" />
+            </interaction>
+            <versioning value="no-version" />
+            <readHistory value="false" />
+            <updateCreate value="false" />
+            <conditionalCreate value="false" />
+            <conditionalUpdate value="false" />
+            <conditionalDelete value="not-supported" />
+            <searchParam>
+                <name value="patient" />
+                <type value="reference" />
+                <target value="Patient" />
+            </searchParam>
+            <searchParam>
+                <name value="date" />
+                <type value="date" />
+                <documentation value="" />
+            </searchParam>
+        </resource>
+        <resource>
+            <type value="Device" />
+            <profile>
+                <reference value="StructureDefinition" />
+                <display value="Definition of capabilities for the resource" />
+            </profile>
+            <interaction>
+                <code value="read" />
+                <documentation value="" />
+            </interaction>
+            <interaction>
+                <code value="search-type" />
+            </interaction>
+            <versioning value="no-version" />
+            <readHistory value="false" />
+            <updateCreate value="false" />
+            <conditionalCreate value="false" />
+            <conditionalUpdate value="false" />
+            <conditionalDelete value="not-supported" />
+            <searchParam>
+                <name value="patient" />
+                <type value="reference" />
+                <target value="Patient" />
+            </searchParam>
+            <searchParam>
+                <name value="date" />
+                <type value="date" />
+                <documentation value="" />
+            </searchParam>
+        </resource>
+        <resource>
+            <type value="CarePlan" />
+            <profile>
+                <reference value="StructureDefinition" />
+                <display value="Definition of capabilities for the resource" />
+            </profile>
+            <interaction>
+                <code value="read" />
+                <documentation value="" />
+            </interaction>
+            <interaction>
+                <code value="search-type" />
+            </interaction>
+            <versioning value="no-version" />
+            <readHistory value="false" />
+            <updateCreate value="false" />
+            <conditionalCreate value="false" />
+            <conditionalUpdate value="false" />
+            <conditionalDelete value="not-supported" />
+            <searchParam>
+                <name value="patient" />
+                <type value="reference" />
+                <target value="Patient" />
+            </searchParam>
+            <searchParam>
+                <name value="category" />
+                <type value="token" />
+            </searchParam>
+            <searchParam>
+                <name value="status" />
+                <type value="token" />
+            </searchParam>
+            <searchParam>
+                <name value="date" />
+                <type value="date" />
+                <documentation value="" />
+            </searchParam>
+        </resource>
+        <resource>
+            <type value="DocumentReference" />
+            <profile>
+                <reference value="StructureDefinition" />
+                <display value="Definition of capabilities for the resource" />
+            </profile>
+            <interaction>
+                <code value="read" />
+                <documentation value="" />
+            </interaction>
+            <interaction>
+                <code value="search-type" />
+            </interaction>
+            <versioning value="no-version" />
+            <readHistory value="false" />
+            <updateCreate value="false" />
+            <conditionalCreate value="false" />
+            <conditionalUpdate value="false" />
+            <conditionalDelete value="not-supported" />
+            <searchParam>
+                <name value="patient" />
+                <type value="reference" />
+                <target value="Patient" />
+            </searchParam>
+            <searchParam>
+                <name value="date" />
+                <type value="date" />
+                <documentation value="" />
+            </searchParam>
+        </resource>
+        <transactionMode value="not-supported" />
+        <operation>
+            <name value="evaluate" />
+            <definition>
+                <reference value="OperationDefinition" />
+                <display value="Evaluation Operation" />
+            </definition>
+        </operation>
+        <compartment
+            value="https://fhir.fhirpoint.open.allscripts.com/fhirroute/fhir/CustProProdSand201SMART/patient" />
+    </rest>
+</Conformance>
